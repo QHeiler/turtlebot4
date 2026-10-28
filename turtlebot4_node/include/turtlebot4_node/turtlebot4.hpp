@@ -47,6 +47,7 @@
 #include "irobot_create_msgs/action/led_animation.hpp"
 #include "irobot_create_msgs/srv/e_stop.hpp"
 #include "irobot_create_msgs/srv/robot_power.hpp"
+#include "irobot_create_msgs/action/square_dock.hpp"
 
 
 /** Supported functions
@@ -71,6 +72,8 @@ static constexpr auto WIFI_TIMER_PERIOD = 5000;
 class Turtlebot4 : public rclcpp::Node
 {
 public:
+  using SquareDock = irobot_create_msgs::action::SquareDock;
+
   // Type alias for actions and services
   using Dock = irobot_create_msgs::action::Dock;
   using Undock = irobot_create_msgs::action::Undock;
@@ -114,6 +117,11 @@ private:
   void back_function_callback();
   void help_function_callback();
   void unused_function_callback();
+
+  // My custom callbacks
+  void hello_function_callback();
+  void square_dock_function_callback();
+  
   void function_call_callback(std::string function_name);
 
   void add_button_function_callbacks();
@@ -166,6 +174,8 @@ private:
   std::unique_ptr<Turtlebot4Action<Undock>> undock_client_;
   std::unique_ptr<Turtlebot4Action<WallFollow>> wall_follow_client_;
   std::unique_ptr<Turtlebot4Action<LedAnimation>> led_animation_client_;
+
+  std::unique_ptr<Turtlebot4Action<SquareDock>> square_dock_client_;
 
   // Services
   std::unique_ptr<Turtlebot4Service<EStop>> estop_client_;

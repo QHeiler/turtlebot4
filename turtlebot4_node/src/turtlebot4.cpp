@@ -1,4 +1,4 @@
-/*
+/*SquareDock
  * Copyright 2021 Clearpath Robotics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,10 @@
 using turtlebot4::Turtlebot4;
 using Dock = irobot_create_msgs::action::Dock;
 using Undock = irobot_create_msgs::action::Undock;
+
+// My custom actions
+using SquareDock = irobot_create_msgs::action::SquareDock;
+
 using WallFollow = irobot_create_msgs::action::WallFollow;
 using LedAnimation = irobot_create_msgs::action::LedAnimation;
 using EStop = irobot_create_msgs::srv::EStop;
@@ -176,6 +180,9 @@ Turtlebot4::Turtlebot4()
     node_handle_,
     "oakd/stop_camera");
 
+  // My custom action clients
+  square_dock_client_ = std::make_unique<Turtlebot4Action<SquareDock>>(node_handle_, "square_dock");
+
   function_callbacks_ = {
     {"Dock", std::bind(&Turtlebot4::dock_function_callback, this)},
     {"Undock", std::bind(&Turtlebot4::undock_function_callback, this)},
@@ -192,6 +199,8 @@ Turtlebot4::Turtlebot4()
     {"Select", std::bind(&Turtlebot4::select_function_callback, this)},
     {"Back", std::bind(&Turtlebot4::back_function_callback, this)},
     {"Help", std::bind(&Turtlebot4::help_function_callback, this)},
+    {"Hello", std::bind(&Turtlebot4::hello_function_callback, this)},
+    {"Square Dock", std::bind(&Turtlebot4::square_dock_function_callback, this)},
   };
 
   // Set function callbacks
@@ -210,6 +219,20 @@ Turtlebot4::Turtlebot4()
   }
 
   run();
+}
+
+void Turtlebot4::hello_function_callback() {
+	RCLCPP_INFO(this->get_logger(), "Greetings!");
+}
+
+void Turtlebot4::square_dock_function_callback() {
+  RCLCPP_INFO(this->get_logger(), "Entering square_dock_function_callback()");
+  if (square_dock_client_ != nullptr) {
+    RCLCPP_INFO(this->get_logger(), "Sending square goal");
+    square_dock_client_->send_goal();
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Square dock client NULL");
+  }
 }
 
 /**
